@@ -2,6 +2,8 @@
 
 A sleek and modular **cryptocurrency tracking web app** built with **Next.js**, designed to display real-time market data, individual coin stats, and manage a personalized watchlist.
 
+Deployed link: https://mac-v-crypto-dashboard.vercel.app/
+
 ---
 
 ## Features
