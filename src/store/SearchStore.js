@@ -1,8 +1,18 @@
-import { create } from 'zustand'
+// SearchStore.js
+import { create } from 'zustand';
+import { debounce } from 'lodash';
 
-const useSearchStore = create((set) => ({
-  query: '',
-  setQuery: (value) => set({ query: value }),
-}))
+const useSearchStore = create((set) => {
+  let debouncedSetQuery = debounce((query) => set({ debouncedQuery: query }), 1000);
 
-export default useSearchStore
+  return {
+    query: '',
+    debouncedQuery: '',
+    setQuery: (query) => {
+      set({ query });
+      debouncedSetQuery(query);
+    },
+  };
+});
+
+export default useSearchStore;

@@ -1,21 +1,15 @@
 'use client'
-import { useEffect, useState } from 'react'
-import { addToWatchlist, removeFromWatchlist, isInWatchlist } from '@/lib/watchlist'
+import useWatchlistStore from '@/store/WatchlistStore'
 
 export default function WatchButton({ coinId }) {
-  const [inList, setInList] = useState(false)
+  const watchlist = useWatchlistStore((state) => state.watchlist)
+  const addToWatchlist = useWatchlistStore((state) => state.addToWatchlist)
+  const removeFromWatchlist = useWatchlistStore((state) => state.removeFromWatchlist)
 
-  useEffect(() => {
-    setInList(isInWatchlist(coinId))
-  }, [coinId])
+  const inList = watchlist.includes(coinId)
 
   const toggleWatchlist = () => {
-    if (inList) {
-      removeFromWatchlist(coinId)
-    } else {
-      addToWatchlist(coinId)
-    }
-    setInList(!inList)
+    inList ? removeFromWatchlist(coinId) : addToWatchlist(coinId)
   }
 
   return (
