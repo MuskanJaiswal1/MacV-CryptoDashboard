@@ -20,7 +20,7 @@ export async function fetchCoins({ page = 1, perPage = 50 } = {}) {
         vs_currency: 'usd',
         order: 'market_cap_desc',
         per_page: perPage,
-        page,
+        page: page,
         sparkline: false,
       },
     });

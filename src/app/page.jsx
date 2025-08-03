@@ -28,8 +28,8 @@ export default function HomePage() {
 
   const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    const pageFromURL = parseInt(searchParams.get("page") || "1", 10);
+ useEffect(() => {
+    const pageFromURL = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
     setPage(pageFromURL);
   }, [searchParams]);
 
@@ -52,6 +52,11 @@ export default function HomePage() {
     };
     loadCoins();
   }, [page]);
+
+   const handlePageChange = (newPage) => {
+    setPage(newPage);
+    router.push(`/?page=${newPage}`);
+  };
 
   const coinsToRender = useMemo(() => {
     const filtered = coins.filter((coin) =>
@@ -107,7 +112,7 @@ export default function HomePage() {
         {!loading && !error && (
           <Pagination
             page={page}
-            setPage={setPage}
+            onPageChange={handlePageChange}
             hasNextPage={coins.length === PER_PAGE}
           />
         )}
@@ -129,7 +134,7 @@ export default function HomePage() {
         {!loading && !error && (
           <Pagination
             page={page}
-            setPage={setPage}
+            onPageChange={handlePageChange}
             hasNextPage={coins.length === PER_PAGE}
           />
         )}
