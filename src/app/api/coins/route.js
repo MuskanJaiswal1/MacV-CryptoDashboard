@@ -10,8 +10,19 @@ export async function GET(req) {
 
   const url = `${BASE_URL}?vs_currency=usd&order=market_cap_desc&per_page=${per_page}&page=${page}&sparkline=false&x_cg_demo_api_key=${API_KEY}`;
 
-  const res = await fetch(url);
-  const data = await res.json();
+  try {
+    const res = await fetch(url);
 
-  return NextResponse.json(data);
+    if (!res.ok) {
+      console.error('CoinGecko error:', res.statusText);
+      return NextResponse.json([]); 
+    }
+
+    const data = await res.json();
+
+    return Array.isArray(data) ? NextResponse.json(data) : NextResponse.json([]);
+  } catch (err) {
+    console.error('Proxy error in /api/coins:', err);
+    return NextResponse.json([]); 
+  }
 }
