@@ -14,8 +14,9 @@ Deployed link: https://mac-v-crypto-dashboard.vercel.app/
   - Coin name, symbol, price, market cap, 24h change.
 - Fully responsive, optimized for all screen sizes.
 - Sorting functionality (e.g., by price, market cap, etc.).
-- Search bar to filter coins by name or symbol.
+- Search bar to filter coins.
 - Modular components like `CoinRow` and `CoinCard`.
+- Pagination support
 
 ### Coin Details Page
 - Dynamic route: `/coin/:id`
@@ -52,6 +53,7 @@ Deployed link: https://mac-v-crypto-dashboard.vercel.app/
 ## Tech Stack
 
 - **Framework**: [Next.js (App Router)](https://nextjs.org/)
+- **Axios** – API data fetching
 - **Styling**: Tailwind CSS
 - **Charts**: Recharts
 - **State Management**: Zustand
@@ -59,6 +61,38 @@ Deployed link: https://mac-v-crypto-dashboard.vercel.app/
 - **Deployment**: Vercel
 
 ---
+
+## Project Structure
+
+```
+macv-crypto-dashboard/
+src/
+├── app/
+│ ├── api/ # API routes (CoinGecko proxy)
+│ │ ├── coins, market-chart/[id], coin/[id], etc.
+│ ├── page.jsx # Homepage (SSR + ClientPage)
+│ ├── watchlist/ # Watchlist page
+│ └── coin/[id]/ # Dynamic coin detail page
+│
+├── components/ # UI and logic components
+│ ├── coin/ # CoinChart, CoinRow, CoinStats, WatchButton
+│ ├── ui/ # Pagination, SortBox, SearchBar
+│ └── skeleton/ # Loading skeletons
+│
+├── lib/ # Modular API service
+│ └── coingecko.js
+│
+├── store/ # Zustand stores
+│ ├── WatchlistStore.js
+│ ├── SearchStore.js
+│ └── SortStore.js
+│
+└── styles/ # Tailwind styles
+└── README.md
+```
+
+---
+
 
 ## Getting Started
 
@@ -74,44 +108,25 @@ cd macv-crypto-dashboard
 ```bash
 npm install
 ```
+# 3. Add .env file
 
-### 3️. Start the Development Server
+```bash
+touch .env.local 
+# COINGECKO_API_KEY=your_coingecko_key_here
+```
+### 4. Start the Development Server
 
 ```bash
 npm run dev
 ```
 
-### 4️. Open the App
+### 5. Open the App
 
 Visit `http://localhost:3000` in your browser.
 
 ---
 
-## Project Structure
-
-```
-macv-crypto-dashboard/
-├── app/
-│   ├── page.jsx                # Homepage (coin listings)
-│   ├── coin/
-│   │   └── [id]/page.jsx       # Coin detail page
-│   └── watchlist/page.jsx      # Watchlist page
-├── components/
-│   ├── CoinCard.jsx            # Reusable coin tile
-│   ├── CoinRow.jsx             # Reusable coin row
-│   ├── WatchButton.jsx         # Add/remove from watchlist
-│   ├── CoinStats.jsx           # Stats display component
-│   ├── CoinChart.jsx           # 7-day line chart
-│   └── layout/
-│       └── Navbar.jsx          # Top navigation
-├── lib/
-│   └── coingecko.js            # API logic (axios wrapper)
-├── store/
-│   ├── SearchStore.js          # Zustand store for search
-│   └── SortStore.js            # Zustand store for sorting
-├── public/                     # Static assets
-├── styles/                     # Global styles (Tailwind)
-└── README.md
-```
-
----
+## Future improvements
+User authentication + backend persistence for watchlist
+Better error handling (fallback UI + retry mechanism)
+Advanced chart view (candlesticks, indicators)
