@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { fetchCoins } from "@/lib/coingecko";
 import CoinRow from "@/components/coin/CoinRow";
 import CoinCard from "@/components/coin/CoinCard";
 import SkeletonRow from "@/components/skeleton/SkeletonRow";
 import SkeletonCard from "@/components/skeleton/SkeletonCard";
+import Pagination from "@/components/ui/Pagination";
 import SortBox from "@/components/ui/SortBox";
 import SortCoins from "@/utils/SortCoins";
 import useSearchStore from "@/store/SearchStore";
@@ -18,9 +20,18 @@ export default function HomePage() {
   const { debouncedQuery } = useSearchStore();
   const { sortBy } = useSortStore();
 
-  const [page, setPage] = useState(1);
   const [error, setError] = useState(null);
   const PER_PAGE = 50;
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    const pageFromURL = parseInt(searchParams.get("page") || "1", 10);
+    setPage(pageFromURL);
+  }, [searchParams]);
 
   const SKELETON_COUNT = PER_PAGE;
 
@@ -84,31 +95,21 @@ export default function HomePage() {
               </tr>
             ) : (
               coinsToRender.map((coin, i) => (
-                <CoinRow key={coin.id} coin={coin} index={(page - 1) * PER_PAGE + i + 1} />
+                <CoinRow
+                  key={coin.id}
+                  coin={coin}
+                  index={(page - 1) * PER_PAGE + i + 1}
+                />
               ))
             )}
           </tbody>
         </table>
         {!loading && !error && (
-          <div className="flex justify-center mt-6 gap-4">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-              className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 disabled:opacity-50"
-            >
-              Previous
-            </button>
-
-            <span className="text-gray-300 self-center">Page {page}</span>
-
-            <button
-              onClick={() => setPage((p) => p + 1)}
-              disabled={coins.length < PER_PAGE}
-              className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-            </button>
-          </div>
+          <Pagination
+            page={page}
+            setPage={setPage}
+            hasNextPage={coins.length === PER_PAGE}
+          />
         )}
       </div>
 
@@ -122,8 +123,15 @@ export default function HomePage() {
           <p className="text-center text-gray-400">No coins found.</p>
         ) : (
           coinsToRender.map((coin, i) => (
-            <CoinCard key={coin.id} coin={coin} index={i + 1} />
+            <CoinCard key={coin.id} coin={coin} index={(page - 1) * PER_PAGE + i + 1} />
           ))
+        )}
+        {!loading && !error && (
+          <Pagination
+            page={page}
+            setPage={setPage}
+            hasNextPage={coins.length === PER_PAGE}
+          />
         )}
       </div>
     </div>
