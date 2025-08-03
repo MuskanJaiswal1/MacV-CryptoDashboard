@@ -33,18 +33,27 @@ export default function WatchlistPage() {
       setLoading(true);
       try {
         const data = await fetchCoinsByIds(watchlist);
-        setCoins(data);
+         if (Array.isArray(data)) {
+          setCoins(data);
+        } else {
+          console.warn('Non-array response from fetchCoinsByIds:', data);
+          setCoins([]);
+        }
       } catch (err) {
         console.error('Error fetching watchlist coins:', err);
+        setCoins([]);
       } finally {
         setLoading(false);
       }
     };
 
+    console.log('Watchlist coins:', coins);
     loadCoins();
   }, [watchlist]);
 
+
   const filteredCoins = useMemo(() => {
+     if (!Array.isArray(coins)) return [];
     return coins.filter((coin) =>
       coin.name.toLowerCase().includes(debouncedQuery.toLowerCase())
     );
@@ -52,6 +61,7 @@ export default function WatchlistPage() {
 
   const coinsToRender = useMemo(() => {
     const list = debouncedQuery ? filteredCoins : coins;
+     if (!Array.isArray(list)) return [];
     return SortCoins([...list], sortBy);
   }, [filteredCoins, coins, debouncedQuery, sortBy]);
 

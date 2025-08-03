@@ -28,11 +28,6 @@ export default function ClientPage() {
   const initialPage = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
   const [page, setPage] = useState(initialPage);
 
-//   useEffect(() => {
-//     const pageFromURL = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
-//     setPage(pageFromURL);
-//   }, [searchParams]);
-
   const SKELETON_COUNT = PER_PAGE;
 
   useEffect(() => {
@@ -41,7 +36,12 @@ export default function ClientPage() {
       setError(null);
       try {
         const data = await fetchCoins({ page, perPage: PER_PAGE });
-        setCoins(data);
+         if (Array.isArray(data)) {
+          setCoins(data);
+        } else {
+          console.warn('Non-array response from fetchCoinsByIds:', data);
+          setCoins([]);
+        }
       } catch (err) {
         setCoins([]);
         console.error("Error fetching coins:", err);
@@ -50,16 +50,18 @@ export default function ClientPage() {
         setLoading(false);
       }
     };
+    console.log("Coins loaded:", coins);
     loadCoins();
   }, [page]);
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
-    // router.push(`/?page=${newPage}`);
     router.replace(`/?page=${newPage}`, { scroll: false });
   };
 
+
   const coinsToRender = useMemo(() => {
+    if (!Array.isArray(coins)) return [];
     const filtered = coins.filter((coin) =>
       coin.name.toLowerCase().includes(debouncedQuery.toLowerCase())
     );

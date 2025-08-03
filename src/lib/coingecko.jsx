@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export async function fetchCoins({ page = 1, perPage = 50 } = {}) {
-  try {
+   try {
     const res = await axios.get(`/api/coins`, {
       params: { page, perPage },
     });
